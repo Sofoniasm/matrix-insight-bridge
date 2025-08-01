@@ -6,3 +6,4 @@
     - docker
     - postgres
     - synapse
+    - nginx

@@ -1,0 +1,37 @@
+- name: Stop and disable host Nginx service
+  service:
+    name: nginx
+    state: stopped
+    enabled: no
+  ignore_errors: yes
+
+
+- name: Pull Nginx image
+  docker_image:
+    name: nginx:latest
+    source: pull
+
+- name: Ensure Nginx config directory exists
+  file:
+    path: /root/docker/nginx
+    state: directory
+
+- name: Deploy Nginx config for Synapse
+  template:
+    src: synapse_nginx.conf.j2
+    dest: /root/docker/nginx/synapse_nginx.conf
+
+- name: Run Nginx container
+  docker_container:
+    name: nginx
+    image: nginx:latest
+    restart_policy: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /root/docker/nginx/synapse_nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+      - /var/www/html:/var/www/html:ro
+    networks:
+      - name: synapse
