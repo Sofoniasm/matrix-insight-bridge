@@ -1,4 +1,4 @@
-synapse_server_name: "matrix.yourdomain.com"
+synapse_server_name: "fidevops.xyz"
 synapse_report_stats: "no"
 synapse_image: "matrixdotorg/synapse:latest"
 postgres_image: "postgres:15-alpine"

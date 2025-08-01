@@ -2,12 +2,12 @@
 - name: Register Matrix admin and five admin users
   vars:
     matrix_users:
-      - { username: "adminuser", displayname: "Admin User" }
-      - { username: "admin1", displayname: "Admin 1" }
-      - { username: "admin2", displayname: "Admin 2" }
-      - { username: "admin3", displayname: "Admin 3" }
-      - { username: "admin4", displayname: "Admin 4" }
-      - { username: "admin5", displayname: "Admin 5" }
+      - { username: "admin", displayname: "Admin" }
+      - { username: "bonb", displayname: "Bonb" }
+      - { username: "clara", displayname: "Clara" }
+      - { username: "jimi", displayname: "Jimi" }
+      - { username: "alex", displayname: "Alex" }
+      - { username: "tony", displayname: "Tony" }
     matrix_password: "Testing1@2"
   block:
     - name: Register users with Synapse admin API

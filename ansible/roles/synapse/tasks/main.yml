@@ -39,6 +39,15 @@
   args:
     creates: "{{ synapse_data_dir }}/homeserver.yaml"
 
+- name: Patch homeserver.yaml for registration options
+  blockinfile:
+    path: "{{ synapse_data_dir }}/homeserver.yaml"
+    marker: "# {mark} ANSIBLE MANAGED REGISTRATION OPTIONS"
+    insertafter: EOF
+    block: |
+      enable_registration: true
+      enable_registration_without_verification: true
+
 # Find all config and signing key files for permission fix
 - name: Find all Synapse config and signing key files
   find:
