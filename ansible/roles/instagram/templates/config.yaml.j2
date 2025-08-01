@@ -1,0 +1,29 @@
+homeserver:
+  address: "http://{{ matrix_homeserver_host }}:8008"
+  domain: "{{ matrix_domain }}"
+appservice:
+  address: "http://localhost:29334"
+  database: "postgresql://{{ db_user }}:{{ db_pass }}@{{ db_host }}/mautrix_instagram"
+instagram:
+  device_seed: "{{ instagram_device_seed | default('changeme_device_seed') }}"
+  api_id: "{{ instagram_api_id | default('') }}"
+  api_hash: "{{ instagram_api_hash | default('') }}"
+  app_version: "{{ instagram_app_version | default('') }}"
+  app_device: "{{ instagram_app_device | default('') }}"
+  # ...other instagram config...
+
+logging:
+  version: 1
+  disable_existing_loggers: false
+  formatters:
+    normal:
+      format: '[%(asctime)s] [%(levelname)s@%(name)s] %(message)s'
+  handlers:
+    console:
+      class: logging.StreamHandler
+      formatter: normal
+      level: INFO
+      stream: ext://sys.stdout
+  root:
+    handlers: [console]
+    level: INFO

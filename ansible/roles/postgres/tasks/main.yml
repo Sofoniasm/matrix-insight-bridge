@@ -27,3 +27,6 @@
       - "5432:5432"
     networks:
       - name: synapse
+
+# Create mautrix-instagram DB and user
+- import_tasks: create_instagram_db.yml

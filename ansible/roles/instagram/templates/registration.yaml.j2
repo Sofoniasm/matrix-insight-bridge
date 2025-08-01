@@ -1,0 +1,12 @@
+id: instagram
+url: "http://localhost:29334"
+as_token: "{{ as_token }}"
+hs_token: "{{ hs_token }}"
+sender_localpart: instagrambot
+rate_limited: false
+namespaces:
+  users:
+    - regex: '@instagram_.*:{{ matrix_domain }}'
+      exclusive: true
+  aliases: []
+  rooms: []

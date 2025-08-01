@@ -1,0 +1,42 @@
+- name: Ensure /data directory exists for mautrix-instagram config
+  file:
+    path: /data
+    state: directory
+    owner: root
+    group: root
+
+
+- name: Create mautrix-instagram config directory
+  file:
+    path: /opt/mautrix-instagram
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: Create config.yaml from template
+  template:
+    src: config.yaml.j2
+    dest: /data/config.yaml
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Create registration.yaml from template
+  template:
+    src: registration.yaml.j2
+    dest: /opt/mautrix-instagram/registration.yaml
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Run mautrix-instagram Docker container
+  docker_container:
+    name: mautrix-instagram
+    image: dock.mau.dev/mautrix/instagram:latest
+    restart_policy: unless-stopped
+    volumes:
+      - /data/config.yaml:/data/config.yaml
+      - /opt/mautrix-instagram/registration.yaml:/data/registration.yaml
+    networks:
+      - name: synapse

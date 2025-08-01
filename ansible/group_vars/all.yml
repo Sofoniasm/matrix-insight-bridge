@@ -7,3 +7,21 @@ postgres_data_dir: "/root/docker/synapse-db/schemas"
 postgres_user: "synapse_user"
 postgres_password: "CHANGEME"
 postgres_db: "synapse"
+
+# --- mautrix-instagram bridge variables ---
+matrix_homeserver_host: matrix.example.com  # Matrix homeserver hostname or IP
+matrix_domain: example.com                  # Matrix domain
+
+db_user: instagram_bridge                   # Database username
+db_pass: Testing1@ECX.COM                  # Database password (set a strong password)
+db_host: localhost                          # Database host
+
+as_token: 245b8541c8ad930613045099bb335248b1d4a9b78c5e049331bcdf2a65e3ad6c
+hs_token: d8b0099b0a1a445298fe1214b77f987052d9cb4937928f24f504d6e59736bcf5
+
+# Required for mautrix-instagram config
+instagram_device_seed: "changeme_device_seed"
+instagram_api_id: ""
+instagram_api_hash: ""
+instagram_app_version: ""
+instagram_app_device: ""

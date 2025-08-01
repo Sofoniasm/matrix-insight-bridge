@@ -8,6 +8,10 @@
       - { username: "jimi", displayname: "Jimi" }
       - { username: "alex", displayname: "Alex" }
       - { username: "tony", displayname: "Tony" }
+      - { username: "clara", displayname: "Clara" }
+      - { username: "jimi", displayname: "Jimi" }
+      - { username: "alex", displayname: "Alex" }
+      - { username: "tony", displayname: "Tony" }
     matrix_password: "Testing1@2"
   block:
     - name: Register users with Synapse admin API
