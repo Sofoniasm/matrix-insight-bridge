@@ -9,31 +9,36 @@ This repository contains Terraform code to provision a Matrix Synapse server on 
 - Ready for Ansible/Docker post-provisioning
 
 ## Usage
-1. Clone this repository.
-2. Edit `variables.tf` to set your Linode API token, image, and root password.
-3. Run:
+
+### 1. Provision Linode VM with Terraform
+1. Edit `variables.tf` to set your Linode API token, image, and root password.
+2. Run:
    ```bash
    terraform init
-   terraform plan
    terraform apply
    ```
-4. The instance will be created with your chosen settings.
 
-## Variables
-- `linode_token`: Your Linode API token (required)
-- `region`: Linode region (default: us-east)
-- `instance_label`: Instance label (default: Matrix)
-- `instance_type`: Linode type (default: g6-standard-1)
-- `image`: Linode image slug (default: linode/ubuntu22.04)
-- `root_pass`: Root password (required)
+### 2. Configure Matrix Synapse with Ansible
+1. Edit `ansible/group_vars/all.yml` to set your domain, database credentials, etc.
+2. Edit `ansible/hosts` to set your server IP and SSH user.
+3. Run:
+   ```bash
+   cd ansible
+   ansible-playbook -i hosts playbook.yml
+   ```
 
-## Outputs
-- Instance ID
-- Instance IP address
+#### Ansible Structure
+- `ansible/playbook.yml`: Main playbook
+- `ansible/group_vars/all.yml`: All variables
+- `ansible/hosts`: Inventory file
+- `ansible/roles/docker`: Installs Docker
+- `ansible/roles/postgres`: Runs Postgres container
+- `ansible/roles/synapse`: Runs Synapse container, generates config, ensures Docker networks
 
 ## Next Steps
-- Use Ansible to configure Docker and systemd on the new instance.
-- Update this README as you add more automation or features.
+- Add admin user creation and DNS automation
+- Secure your credentials and secrets
+- Update this README as you add more features
 
 ---
 

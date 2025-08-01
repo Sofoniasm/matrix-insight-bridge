@@ -1,0 +1,46 @@
+- name: Ensure synapse Docker network exists
+  docker_network:
+    name: synapse
+    state: present
+
+- name: Ensure proxy Docker network exists
+  docker_network:
+    name: proxy
+    state: present
+
+- name: Create Synapse data directory
+  file:
+    path: "{{ synapse_data_dir }}"
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: Generate Synapse config (first run only)
+  command: >
+    docker run --rm
+      --mount type=volume,src=synapse-data,dst=/data
+      -e SYNAPSE_SERVER_NAME={{ synapse_server_name }}
+      -e SYNAPSE_REPORT_STATS={{ synapse_report_stats }}
+      {{ synapse_image }} generate
+  args:
+    creates: "{{ synapse_data_dir }}/homeserver.yaml"
+
+- name: Run Synapse container
+  docker_container:
+    name: synapse
+    image: "{{ synapse_image }}"
+    restart_policy: unless-stopped
+    env:
+      SYNAPSE_CONFIG_PATH: "/data/homeserver.yaml"
+      UID: "1000"
+      GID: "1000"
+    volumes:
+      - "{{ synapse_data_dir }}:/data"
+    networks:
+      - name: synapse
+      - name: proxy
+    # Uncomment to expose ports directly if not using a proxy
+    # published_ports:
+    #   - "8448:8448"
+    #   - "8008:8008"

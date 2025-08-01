@@ -1,0 +1,29 @@
+- name: Ensure synapse Docker network exists
+  docker_network:
+    name: synapse
+    state: present
+
+- name: Create Postgres data directory
+  file:
+    path: "{{ postgres_data_dir }}"
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: Run Postgres container
+  docker_container:
+    name: synapse-db
+    image: "{{ postgres_image }}"
+    restart_policy: unless-stopped
+    env:
+      POSTGRES_USER: "{{ postgres_user }}"
+      POSTGRES_PASSWORD: "{{ postgres_password }}"
+      POSTGRES_DB: "{{ postgres_db }}"
+      POSTGRES_INITDB_ARGS: "--encoding=UTF-8 --lc-collate=C --lc-ctype=C"
+    volumes:
+      - "{{ postgres_data_dir }}:/var/lib/postgresql/data"
+    ports:
+      - "5432:5432"
+    networks:
+      - name: synapse

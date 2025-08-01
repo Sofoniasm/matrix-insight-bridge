@@ -1,0 +1,2 @@
+[matrix]
+192.155.91.114 ansible_user=root ansible_ssh_pass=Testing1@ECX.COM
