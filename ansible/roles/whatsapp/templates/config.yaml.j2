@@ -1,0 +1,12 @@
+homeserver:
+  address: "http://{{ matrix_homeserver_host }}:8008"
+  domain: "{{ matrix_domain }}"
+appservice:
+  address: "http://localhost:29334"
+  database: "postgresql://{{ whatsapp_db_user }}:{{ whatsapp_db_pass }}@{{ whatsapp_db_host }}:5432/mautrix_whatsapp"
+  as_token: "{{ whatsapp_as_token }}"
+  hs_token: "{{ whatsapp_hs_token }}"
+
+bridge:
+  permissions:
+    "@*:{{ matrix_domain }}": "user"

@@ -1,0 +1,43 @@
+- name: Ensure /data directory exists for mautrix-telegram config
+  file:
+    path: /data
+    state: directory
+    owner: root
+    group: root
+
+- name: Create mautrix-telegram config directory
+  file:
+    path: /opt/mautrix-telegram
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: Create config.yaml from template
+  template:
+    src: config.yaml.j2
+    dest: /data/telegram-config.yaml
+    owner: root
+    group: root
+    mode: '0644'
+  notify: Restart mautrix-telegram
+
+- name: Create registration.yaml from template
+  template:
+    src: registration.yaml.j2
+    dest: /opt/mautrix-telegram/registration.yaml
+    owner: root
+    group: root
+    mode: '0644'
+  notify: Restart mautrix-telegram
+
+- name: Run mautrix-telegram Docker container
+  docker_container:
+    name: mautrix-telegram
+    image: dock.mau.dev/mautrix/telegram:latest
+    restart_policy: unless-stopped
+    volumes:
+      - /data/telegram-config.yaml:/data/config.yaml
+      - /opt/mautrix-telegram/registration.yaml:/data/registration.yaml
+    networks:
+      - name: synapse

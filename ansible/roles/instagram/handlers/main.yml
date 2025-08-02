@@ -1,0 +1,6 @@
+---
+- name: Restart mautrix-instagram
+  docker_container:
+    name: mautrix-instagram
+    state: started
+    restart: true

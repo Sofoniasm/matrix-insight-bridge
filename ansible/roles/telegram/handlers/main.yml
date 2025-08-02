@@ -1,0 +1,6 @@
+---
+- name: Restart mautrix-telegram
+  docker_container:
+    name: mautrix-telegram
+    state: started
+    restart: true

@@ -1,0 +1,13 @@
+id: telegram
+url: "http://localhost:29335"
+as_token: "{{ telegram_as_token }}"
+hs_token: "{{ telegram_hs_token }}"
+sender_localpart: telegbot
+rate_limited: false
+namespaces:
+  users:
+    - exclusive: true
+      regex: '@telegram_.*:{{ matrix_domain }}'
+  aliases:
+    - exclusive: true
+      regex: '#telegram_.*:{{ matrix_domain }}'

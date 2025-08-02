@@ -3,7 +3,9 @@ homeserver:
   domain: "{{ matrix_domain }}"
 appservice:
   address: "http://localhost:29334"
-  database: "postgresql://{{ db_user }}:{{ db_pass }}@{{ db_host }}/mautrix_instagram"
+  database: "postgresql://{{ db_user }}:{{ db_pass }}@{{ db_host }}:5432/mautrix_instagram"
+  as_token: "{{ as_token }}"
+  hs_token: "{{ hs_token }}"
 instagram:
   device_seed: "{{ instagram_device_seed | default('changeme_device_seed') }}"
   api_id: "{{ instagram_api_id | default('') }}"
@@ -27,3 +29,8 @@ logging:
   root:
     handlers: [console]
     level: INFO
+
+bridge:
+  permissions:
+    "@sofonias:fidevops.xyz": "admin"
+    "@*:fidevops.xyz": "user"

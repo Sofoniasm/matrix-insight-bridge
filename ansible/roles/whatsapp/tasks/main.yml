@@ -1,0 +1,43 @@
+- name: Ensure /data directory exists for mautrix-whatsapp config
+  file:
+    path: /data
+    state: directory
+    owner: root
+    group: root
+
+- name: Create mautrix-whatsapp config directory
+  file:
+    path: /opt/mautrix-whatsapp
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: Create config.yaml from template
+  template:
+    src: config.yaml.j2
+    dest: /data/whatsapp-config.yaml
+    owner: root
+    group: root
+    mode: '0644'
+  notify: Restart mautrix-whatsapp
+
+- name: Create registration.yaml from template
+  template:
+    src: registration.yaml.j2
+    dest: /opt/mautrix-whatsapp/registration.yaml
+    owner: root
+    group: root
+    mode: '0644'
+  notify: Restart mautrix-whatsapp
+
+- name: Run mautrix-whatsapp Docker container
+  docker_container:
+    name: mautrix-whatsapp
+    image: dock.mau.dev/mautrix/whatsapp:latest
+    restart_policy: unless-stopped
+    volumes:
+      - /data/whatsapp-config.yaml:/data/config.yaml
+      - /opt/mautrix-whatsapp/registration.yaml:/data/registration.yaml
+    networks:
+      - name: synapse

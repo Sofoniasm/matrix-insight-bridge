@@ -1,0 +1,11 @@
+homeserver:
+appservice:
+  address: "http://localhost:29335"
+  database: "postgresql://{{ telegram_db_user }}:{{ telegram_db_pass }}@{{ telegram_db_host }}:5432/mautrix_telegram"
+  as_token: "{{ telegram_as_token }}"
+  hs_token: "{{ telegram_hs_token }}"
+  bot_token: {{ telegram_bot_token }}
+
+bridge:
+  permissions:
+    "@*:{{ matrix_domain }}": "user"
