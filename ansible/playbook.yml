@@ -1,5 +1,6 @@
 - hosts: all
   become: true
+
   vars_files:
     - group_vars/all.yml
   roles:
@@ -7,6 +8,4 @@
     - postgres
     - synapse
     - nginx
-    - instagram
     - whatsapp
-    - telegram

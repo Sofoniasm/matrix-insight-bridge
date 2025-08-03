@@ -1,3 +1,12 @@
+ # Ensure Synapse data directory exists
+- name: Ensure Synapse data directory exists
+  file:
+    path: "{{ synapse_data_dir }}"
+    state: directory
+    owner: 991
+    group: 991
+    mode: '0777'
+
 # Ensure Synapse data directory is owned by 991 and world-writable before config generation
 - name: Ensure Synapse data directory is owned by 991 and world-writable
   file:
@@ -28,6 +37,9 @@
     path: "{{ synapse_data_dir }}/homeserver.yaml"
     state: absent
 
+
+
+
 # Generate Synapse config and signing key for the correct domain
 - name: Generate Synapse config and signing key
   command: >
@@ -38,6 +50,60 @@
       {{ synapse_image }} generate
   args:
     creates: "{{ synapse_data_dir }}/homeserver.yaml"
+
+# Remove any duplicate bind_addresses lines
+- name: Remove duplicate bind_addresses lines
+  lineinfile:
+    path: "{{ synapse_data_dir }}/homeserver.yaml"
+    regexp: '^bind_addresses:'
+    state: absent
+
+# Ensure Synapse binds to 0.0.0.0 for bridges (add only one line)
+- name: Ensure Synapse binds to 0.0.0.0 for bridges
+  lineinfile:
+    path: "{{ synapse_data_dir }}/homeserver.yaml"
+    regexp: '^bind_addresses:'
+    line: "bind_addresses: ['0.0.0.0']"
+    insertafter: '^server_name:'
+
+
+# Ensure WhatsApp registration file is templated with correct bridge URL and permissions
+- name: Ensure WhatsApp registration file is templated with correct bridge URL and permissions
+  template:
+    src: whatsapp/registration-whatsapp.yaml.j2
+    dest: "{{ synapse_data_dir }}/registration-whatsapp.yaml"
+    owner: 991
+    group: 991
+    mode: '0644'
+  vars:
+    whatsapp_bridge_url: "http://localhost:29318"
+
+
+
+
+
+- name: Ensure WhatsApp registration file is included in Synapse config
+  blockinfile:
+    path: "{{ synapse_data_dir }}/homeserver.yaml"
+    marker: "# {mark} ANSIBLE MANAGED WHATSAPP APP SERVICE CONFIG"
+    insertafter: '^server_name:'
+    block: |
+      app_service_config_files:
+        - /data/registration-whatsapp.yaml
+
+- name: Ensure Synapse container mounts WhatsApp registration file
+  set_fact:
+    synapse_extra_volumes: >-
+      {{ synapse_extra_volumes | default([]) + [ {'host_path': synapse_data_dir + '/registration-whatsapp.yaml', 'container_path': '/data/registration-whatsapp.yaml'} ] }}
+
+
+
+- name: Ensure Synapse binds to 0.0.0.0 for bridges
+  lineinfile:
+    path: "{{ synapse_data_dir }}/homeserver.yaml"
+    regexp: '^bind_addresses:'
+    line: "bind_addresses: ['0.0.0.0']"
+    insertafter: '^server_name:'
 
 - name: Patch homeserver.yaml for registration options
   blockinfile:
@@ -86,13 +152,13 @@
       GID: "991"
     volumes:
       - "{{ synapse_data_dir }}:/data"
+      - "{{ synapse_data_dir }}/registration-whatsapp.yaml:/data/registration-whatsapp.yaml"
     networks:
       - name: synapse
       - name: proxy
-    # Uncomment to expose ports directly if not using a proxy
-    # published_ports:
-    #   - "8448:8448"
-    #   - "8008:8008"
+    published_ports:
+      - "8448:8448"
+      - "8008:8008"
 
 - name: Register admin and five admin users
   import_tasks: register_admins.yml
